@@ -43,10 +43,9 @@ const modalStyle = {
 export default function EditModal(props) {
   const { openModal, setOpenModal, editData, setEditData, setData } = props;
   const classes = useStyles();
-  let itemvalue;
-  if (editData?.price[0] === '$') itemvalue = Number(editData?.price.slice(1)) * Number( editData?.quantity)
-  else itemvalue = Number(editData?.price) * Number( editData?.quantity)
-console.log(editData)
+
+  let itemvalue = Number(editData?.price) * Number( editData?.quantity)
+
   return (
     <>
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
@@ -115,7 +114,6 @@ console.log(editData)
                     if (obj.id === editData.id) return {...editData, value: itemvalue};
                     else return obj;
                   });
-                  console.log(newData);
                   return newData;
                 });
                 setOpenModal(false);

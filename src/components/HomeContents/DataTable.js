@@ -13,6 +13,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
 import EditModal from "./EditModal";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const useStyles = makeStyles(() => ({
   table: {
@@ -27,19 +28,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({ theme, disabled }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "gray",
+    backgroundColor: "#3b3737",
     color: theme.palette.common.white,
   },
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  "&:last-child td, &:last-child th": {
-    border: 0,
+  [`&.${tableCellClasses.body}`]: {
+    backgroundColor: "#3b3737",
+    color: disabled ? theme.palette.common.gray : theme.palette.common.white,
   },
 }));
 
@@ -66,19 +62,22 @@ export default function DataTable(props) {
             </TableHead>
             <TableBody>
               {data.map((item) => (
-                <StyledTableRow
-                  key={item.id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <StyledTableCell>{item.name}</StyledTableCell>
-                  <StyledTableCell align="center">
+                <TableRow key={item.id}>
+                  <StyledTableCell disabled={item.disabled}>
+                    {item.name}
+                  </StyledTableCell>
+                  <StyledTableCell align="center" disabled={item.disabled}>
                     {item.category}
                   </StyledTableCell>
-                  <StyledTableCell align="center">{'$'}{' '}{item.price}</StyledTableCell>
-                  <StyledTableCell align="center">
+                  <StyledTableCell align="center" disabled={item.disabled}>
+                    {"$"} {item.price}
+                  </StyledTableCell>
+                  <StyledTableCell align="center" disabled={item.disabled}>
                     {item.quantity}
                   </StyledTableCell>
-                  <StyledTableCell align="center">{'$'}{' '}{item.value}</StyledTableCell>
+                  <StyledTableCell align="center" disabled={item.disabled}>
+                    {"$"} {item.value}
+                  </StyledTableCell>
                   <StyledTableCell align="center">
                     <div class={classes.actionButtons}>
                       <IconButton
@@ -90,9 +89,24 @@ export default function DataTable(props) {
                       >
                         <EditIcon />
                       </IconButton>
-                      <IconButton disabled={!admin || item.disabled}>
-                        {" "}
-                        <VisibilityIcon />
+                      <IconButton
+                        disabled={!admin}
+                        onClick={() => {
+                          setData((prev) => {
+                            let newData = [...prev].map((obj) => {
+                              if (obj.id === item.id)
+                                return { ...obj, disabled: !obj.disabled };
+                              return obj;
+                            });
+                            return newData;
+                          });
+                        }}
+                      >
+                        {item.disabled ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
                       </IconButton>
                       <IconButton
                         onClick={() => {
@@ -103,13 +117,13 @@ export default function DataTable(props) {
                             return newData;
                           });
                         }}
-                        disabled={!admin || item.disabled}
+                        disabled={!admin}
                       >
                         <DeleteIcon />
                       </IconButton>
                     </div>
                   </StyledTableCell>
-                </StyledTableRow>
+                </TableRow>
               ))}
             </TableBody>
           </Table>

@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
   stat: {
     borderRadius: "10px",
     border: "1px solid gray",
-    backgroundColor: "gray",
+    backgroundColor: "#3b3737",
     height: "100px",
     flexGrow: 1,
     padding: "10px",
@@ -25,20 +25,24 @@ export default function Stats(props) {
   const classes = useStyles();
 
   const totalStoreValue = data.reduce((acc, curr) => {
-    let num = curr.value;
-    acc += num - '';
+    if (!curr.disabled) {
+      let num = curr.value;
+      acc += num - '';
+    }
     return acc;
   }, 0);
 
   const outOfStock = data.reduce((acc, curr) => {
-    if (curr.quantity === 0) acc++;
+    if (curr.quantity === 0 && !curr.disabled) acc++;
     return acc;
   }, 0)
 
   const numberOfCategory = data.reduce((acc, curr) => {
-    if (!acc.includes(curr.category)) acc.push(curr.category);
+    if (!acc.includes(curr.category) && !curr.disabled) acc.push(curr.category);
     return acc;
   }, []);
+
+  const totalProducts = data.filter(obj => !obj.disabled);
 
   return (
     <div class={classes.root}>
@@ -49,7 +53,7 @@ export default function Stats(props) {
         <div class={classes.stat}>
           <Text>Total Products</Text> <br />
           <h4>
-            <Text>{data.length}</Text>{" "}
+            <Text>{totalProducts.length}</Text>{" "}
           </h4>
         </div>
         <div class={classes.stat}>
